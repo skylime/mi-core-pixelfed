@@ -1,0 +1,28 @@
+# web server
+nginx
+# php
+php83-fpm
+php83-gd
+php83-bcmath
+php83-curl
+php83-exif
+php83-gd
+php83-iconv
+php83-intl
+php83-mbstring
+php83-sodium
+php83-pcntl
+php83-posix
+php83-redis
+php83-zip
+# database
+mariadb-server
+redis
+php83-mysqli
+php83-pdo_mysql
+# extras
+php83-composer
+jpegoptim
+optipng
+pngquant
+ffmpeg6

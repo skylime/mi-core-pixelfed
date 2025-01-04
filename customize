@@ -1,0 +1,41 @@
+#!/usr/bin/bash
+
+set -o errexit
+
+PATH=/opt/local/gnu/bin:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
+
+PIXELFED_VERSION='v0.12.4'
+
+# Munin plugins
+MUNIN_PLUGINS="
+"
+
+echo "* Configuring image specific packages."
+mkdir -p /opt/pixelfed
+
+echo "* Download and extract pixelfed to /opt/pixelfed"
+curl -L "https://github.com/pixelfed/pixelfed/archive/${PIXELFED_VERSION}.tar.gz" | gtar xz -C /opt/pixelfed --strip-components=1
+
+echo "* Add pixelfed user"
+groupadd pixelfed
+useradd -d /opt/pixelfed -c "pixelfed user" -s /usr/bin/false -g pixelfed pixelfed
+
+echo "* Setup permissions for pixelfed folder"
+chown -R pixelfed:www /opt/pixelfed
+
+cd /opt/pixelfed \
+  && export COMPOSER_HOME=/opt/pixelfed \
+  && composer install --no-ansi --no-interaction --optimize-autoloader
+
+echo "* Remove unused mysql stuff from base"
+rm -rf /var/mysql/*
+
+echo "* Activate munin plugins"
+/opt/core/bin/munin-node-plugins "${MUNIN_PLUGINS}"
+
+echo "* Cleanup home/admin because of delegate dataset usage"
+rm -rf /home/admin/.[^.]*
+
+echo "* Cleaning up."
+rm -rf /root/*
+sm-prepare-image -y
