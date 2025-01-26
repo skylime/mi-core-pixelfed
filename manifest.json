@@ -1,11 +1,11 @@
 {
   "name": "core-pixelfed",
-  "version": "23.4.0",
+  "version": "24.4.0",
   "description": "Pixelfed - image sharing social network service",
   "organization": "SkyLime",
   "brand": "Instance",
   "homepage": "https://github.com/skylime/mi-core-pixelfed",
-  "base": "9e45669f-c804-4aff-be1a-c5c2621244c7",
+  "base": "8e735415-2575-4c0f-92bc-d6f2f59bdef1",
   "customer_metadata": {
     "admin_authorized_keys": {
       "type": "text",

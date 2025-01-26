@@ -8,6 +8,7 @@ php83-curl
 php83-exif
 php83-gd
 php83-iconv
+php83-imagick
 php83-intl
 php83-mbstring
 php83-sodium

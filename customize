@@ -17,15 +17,18 @@ echo "* Download and extract pixelfed to /opt/pixelfed"
 curl -L "https://github.com/pixelfed/pixelfed/archive/${PIXELFED_VERSION}.tar.gz" | gtar xz -C /opt/pixelfed --strip-components=1
 
 echo "* Add pixelfed user"
-groupadd pixelfed
-useradd -d /opt/pixelfed -c "pixelfed user" -s /usr/bin/false -g pixelfed pixelfed
+useradd -d /opt/pixelfed -c "pixelfed user" -s /bin/bash -g www pixelfed
+
+echo "* Install dependencies"
+cd /opt/pixelfed \
+  && export COMPOSER_HOME=/opt/pixelfed \
+  && composer install --no-ansi --no-interaction --optimize-autoloader
 
 echo "* Setup permissions for pixelfed folder"
 chown -R pixelfed:www /opt/pixelfed
 
-cd /opt/pixelfed \
-  && export COMPOSER_HOME=/opt/pixelfed \
-  && composer install --no-ansi --no-interaction --optimize-autoloader
+echo "* Remove php-fpm www pool configuration"
+rm /opt/local/etc/php-fpm.d/www.conf
 
 echo "* Remove unused mysql stuff from base"
 rm -rf /var/mysql/*
