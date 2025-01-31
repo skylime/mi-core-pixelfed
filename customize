@@ -20,9 +20,13 @@ echo "* Add pixelfed user"
 useradd -d /opt/pixelfed -c "pixelfed user" -s /bin/bash -g www pixelfed
 
 echo "* Install dependencies"
-cd /opt/pixelfed \
-  && export COMPOSER_HOME=/opt/pixelfed \
-  && composer install --no-ansi --no-interaction --optimize-autoloader
+cd /opt/pixelfed &&
+  export COMPOSER_HOME=/opt/pixelfed &&
+  composer install --no-ansi --no-interaction --optimize-autoloader
+
+echo "* Backup storage skel folder"
+mv /opt/pixelfed/storage /opt/pixelfed/storage.skel
+mkdir /opt/pixelfed/storage
 
 echo "* Setup permissions for pixelfed folder"
 chown -R pixelfed:www /opt/pixelfed

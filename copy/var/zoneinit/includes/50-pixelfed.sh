@@ -22,7 +22,7 @@ _insertreplace() {
   if grep -q "${key}" "${file}"; then
     gsed -i "s|^${key}\s*=.*|${key}=${value}|g" "${file}"
   else
-    echo "${key} = ${value}" >> "${file}"
+    echo "${key} = ${value}" >>"${file}"
   fi
 }
 # _pixelfed_php command
@@ -30,8 +30,9 @@ _pixelfed_php() {
   cd "${PIXELFED_HOME}" && php ${*}
 }
 
-log "Create database if not exists"
+log "Initial setup if first setup"
 if [[ ! -d /var/mysql/pixelfed ]]; then
+  log "Install database"
   PIXELFED_INIT="CREATE DATABASE IF NOT EXISTS pixelfed;
         CREATE USER 'pixelfed'@'localhost' IDENTIFIED BY '${MYSQL_PIXELFED_PW}';
         CREATE USER 'pixelfed'@'127.0.0.1' IDENTIFIED BY '${MYSQL_PIXELFED_PW}';
@@ -39,19 +40,22 @@ if [[ ! -d /var/mysql/pixelfed ]]; then
         GRANT ALL PRIVILEGES ON pixelfed.* TO 'pixelfed'@'127.0.0.1';
         FLUSH PRIVILEGES;"
 
-  mysql --user=root --password=${MYSQL_ROOT_PW} -e "${PIXELFED_INIT}" > /dev/null \
-    || (log "ERROR MySQL query failed to execute." && exit 31)
+  mysql --user=root --password=${MYSQL_ROOT_PW} -e "${PIXELFED_INIT}" >/dev/null ||
+    (log "ERROR MySQL query failed to execute." && exit 31)
+
+  log "Copy storage skel files"
+  cp -r ${PIXELFED_HOME}/storage.skel/* ${PIXELFED_HOME}/storage/
 fi
 
 log "Initial setup .env file"
 if [[ ! -f "${PIXELFED_HOME}/.env" ]]; then
   cp "${PIXELFED_HOME}/.env.example" "${PIXELFED_HOME}/.env"
 fi
-PIXELFED_KEY=${PIXELFED_KEY:-$(mdata-get pixelfed_key 2> /dev/null)} \
-  || PIXELFED_KEY=$(_pixelfed_php artisan key:generate --show)
+PIXELFED_KEY=${PIXELFED_KEY:-$(mdata-get pixelfed_key 2>/dev/null)} ||
+  PIXELFED_KEY=$(_pixelfed_php artisan key:generate --show)
 mdata-put pixelfed_key "${PIXELFED_KEY}"
 
-if PIXELFED_APP_NAME=$(mdata-get pixelfed_app_name 2> /dev/null); then
+if PIXELFED_APP_NAME=$(mdata-get pixelfed_app_name 2>/dev/null); then
   _insertreplace ${PIXELFED_ENV} APP_NAME "${PIXELFED_APP_NAME}"
 fi
 _insertreplace ${PIXELFED_ENV} APP_KEY "$(mdata-get pixelfed_key)"
