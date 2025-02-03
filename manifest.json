@@ -1,6 +1,6 @@
 {
   "name": "core-pixelfed",
-  "version": "24.4.0",
+  "version": "24.4.1",
   "description": "Pixelfed - image sharing social network service",
   "organization": "SkyLime",
   "brand": "Instance",
