@@ -47,6 +47,9 @@ if [[ ! -d /var/mysql/pixelfed ]]; then
   cp -r ${PIXELFED_HOME}/storage.skel/* ${PIXELFED_HOME}/storage/
 fi
 
+log "Fix permissions for storage data"
+chown -R pixelfed:www ${PIXELFED_HOME}/storage || true
+
 log "Initial setup .env file"
 if [[ ! -f "${PIXELFED_HOME}/.env" ]]; then
   cp "${PIXELFED_HOME}/.env.example" "${PIXELFED_HOME}/.env"
@@ -86,7 +89,7 @@ _pixelfed_php artisan horizon:install
 _pixelfed_php artisan horizon:publish
 
 log "Create admin account"
-PIXELFED_ADMIN_INITIAL_PW=$(/opt/core/bin/mdata-create-password.sh -m kumquat_pixelfed_initial_pw)
+PIXELFED_ADMIN_INITIAL_PW=$(/opt/core/bin/mdata-create-password.sh -m pixelfed_initial_pw)
 PIXELFED_ADMIN_MAIL=$(mdata-get pixelfed_admin_mail 2>/dev/null || mdata-get mail_adminaddr 2>/dev/null || echo 'admin@localhost')
 
 if ! _pixelfed_php artisan user:table | grep -q " admin "; then
