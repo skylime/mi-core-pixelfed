@@ -28,6 +28,10 @@ echo "* Backup storage skel folder"
 mv /opt/pixelfed/storage /opt/pixelfed/storage.skel
 mkdir /opt/pixelfed/storage
 
+echo "* Patch file system permissions"
+cd /opt/pixelfed/config &&
+  patch </tmp/filesystems.php.diff
+
 echo "* Setup permissions for pixelfed folder"
 chown -R pixelfed:www /opt/pixelfed
 

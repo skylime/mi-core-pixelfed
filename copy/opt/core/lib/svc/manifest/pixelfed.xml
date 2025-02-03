@@ -1,0 +1,31 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<service_bundle type='manifest' name='export'>
+  <service name='application/pixelfed' type='service' version='1'>
+    <dependency name='net-physical' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/network/physical'/>
+    </dependency>
+    <dependency name='filesystem' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/system/filesystem/local'/>
+    </dependency>
+      <method_context working_directory='/opt/pixelfed'>
+        <method_credential user='pixelfed' group='www' />
+        <method_environment>
+          <envvar name='PATH' value='/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin:/bin'/>
+        </method_environment>
+      </method_context>
+    <instance name='horizon' enabled='false'>
+      <exec_method name='start' type='method' exec='/opt/local/bin/php artisan horizon' timeout_seconds='0'/>
+      <exec_method name='stop'    type='method' exec=':kill'      timeout_seconds='30'/>
+      <exec_method name='refresh' type='method' exec=':kill -HUP' timeout_seconds='0'/>
+      <property_group name="startd" type="framework">
+        <propval name="duration" type="astring" value="child"/>
+      </property_group>
+      <template>
+        <common_name>
+          <loctext xml:lang='C'>Pixelfed Horizon Service</loctext>
+        </common_name>
+      </template>
+    </instance>
+  </service>
+</service_bundle>

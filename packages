@@ -27,3 +27,5 @@ jpegoptim
 optipng
 pngquant
 ffmpeg6
+# Patch source code
+patch

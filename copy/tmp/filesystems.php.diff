@@ -1,0 +1,16 @@
+--- filesystems.php.orig        Sun Feb  2 14:30:44 2025
++++ filesystems.php     Sun Feb  2 14:31:05 2025
+@@ -49,11 +49,11 @@
+             'permissions' => [
+                 'file' => [
+                     'public' => 0644,
+-                    'private' => 0600,
++                    'private' => 0640,
+                 ],
+                 'dir' => [
+                     'public' => 0755,
+-                    'private' => 0700,
++                    'private' => 0750,
+                 ],
+             ],
+         ],

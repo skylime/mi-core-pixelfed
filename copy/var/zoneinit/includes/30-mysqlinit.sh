@@ -1,8 +1,8 @@
 # MySQL my.cnf creation/tuning
-MEMCAP=$(kstat -c zone_memory_cap -s physcap -p | cut -f2 | awk '{ printf "%d", $1/1024/1024/3 }');
+MEMCAP=$(kstat -c zone_memory_cap -s physcap -p | cut -f2 | awk '{ printf "%d", $1/1024/1024/3 }')
 
 # innodb_buffer_pool_size
-INNODB_BUFFER_POOL_SIZE=$(echo -e "scale=0; ${MEMCAP}/2"|bc)M
+INNODB_BUFFER_POOL_SIZE=$(echo -e "scale=0; ${MEMCAP}/2" | bc)M
 
 # back_log
 BACK_LOG=64
@@ -16,11 +16,11 @@ BACK_LOG=64
 [[ ${MEMCAP} -gt 5000 ]] && MAX_CONNECTIONS=5000
 
 # thread_cache_size
-THREAD_CACHE_SIZE=$((${MAX_CONNECTIONS}/2))
+THREAD_CACHE_SIZE=$((${MAX_CONNECTIONS} / 2))
 [[ ${THREAD_CACHE_SIZE} -gt 1000 ]] && THREAD_CACHE_SIZE=1000
 
 log "create tuned g/MySQL configuration"
-cat > /opt/local/etc/my.cnf <<EOF
+cat >/opt/local/etc/my.cnf <<EOF
 
 # The MySQL server
 [mysqld]
@@ -75,5 +75,5 @@ no-auto-rehash
 EOF
 
 if [ ! -d /var/mysql/mysql ]; then
-         mariadb-install-db --datadir=/var/mysql --skip-name-resolve --skip-test-db --user=mariadb
+  mariadb-install-db --datadir=/var/mysql --skip-name-resolve --skip-test-db --user=mariadb
 fi

@@ -14,4 +14,4 @@ fi
 
 # Always try to set the correct permissions for /var/mysql
 chown -R mariadb:mariadb /var/mysql || true
-chown -R pixelfed:www /opt/prixelfed/storage || true
+chown -R pixelfed:www /opt/pixelfed/storage || true

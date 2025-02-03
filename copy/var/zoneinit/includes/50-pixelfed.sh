@@ -27,7 +27,7 @@ _insertreplace() {
 }
 # _pixelfed_php command
 _pixelfed_php() {
-  cd "${PIXELFED_HOME}" && php ${*}
+  cd "${PIXELFED_HOME}" && su pixelfed -c "php ${*}"
 }
 
 log "Initial setup if first setup"
@@ -66,10 +66,12 @@ _insertreplace ${PIXELFED_ENV} SESSION_DOMAIN "${HOSTNAME}"
 
 _insertreplace ${PIXELFED_ENV} DB_PASSWORD "${MYSQL_PIXELFED_PW}"
 
-_insertreplace ${PIXELFED_ENV} MAIL_DRIVER sendmail
+_insertreplace ${PIXELFED_ENV} MAIL_DRIVER "sendmail"
 
-_insertreplace ${PIXELFED_ENV} ACTIVITY_PUB true
-_insertreplace ${PIXELFED_ENV} AP_REMOTE_FOLLOW true
+_insertreplace ${PIXELFED_ENV} OAUTH_ENABLED "false"
+
+_insertreplace ${PIXELFED_ENV} ACTIVITY_PUB "true"
+_insertreplace ${PIXELFED_ENV} AP_REMOTE_FOLLOW "true"
 
 log "Initial commands for setup"
 _pixelfed_php artisan storage:link
@@ -82,3 +84,16 @@ _pixelfed_php artisan view:cache
 log "Install Laravel Horizon"
 _pixelfed_php artisan horizon:install
 _pixelfed_php artisan horizon:publish
+
+log "Create admin account"
+PIXELFED_ADMIN_INITIAL_PW=$(/opt/core/bin/mdata-create-password.sh -m kumquat_pixelfed_initial_pw)
+PIXELFED_ADMIN_MAIL=$(mdata-get pixelfed_admin_mail 2>/dev/null || mdata-get mail_adminaddr 2>/dev/null || echo 'admin@localhost')
+
+if ! _pixelfed_php artisan user:table | grep -q " admin "; then
+  _pixelfed_php artisan user:create \
+    --name=admin --username=admin --email=${PIXELFED_ADMIN_MAIL} \
+    --password=${PIXELFED_ADMIN_INITIAL_PW} --is_admin=1 --no-interaction
+fi
+
+log "Enable pixelfed horizon service"
+svcadm enable svc:/application/pixelfed:horizon
