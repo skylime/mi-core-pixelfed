@@ -1,5 +1,11 @@
 # Changelog
 
+## 24.4.2
+
+### New
+
+* Pixelfed update to 0.12.5. [Thomas Merkel]
+
 ## 24.4.1
 
 ### Fix
