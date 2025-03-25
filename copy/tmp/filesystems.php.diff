@@ -9,8 +9,8 @@
                  ],
                  'dir' => [
                      'public' => 0755,
--                    'private' => 0700,
-+                    'private' => 0750,
+-                    'private' => 0711,
++                    'private' => 0751,
                  ],
              ],
          ],
