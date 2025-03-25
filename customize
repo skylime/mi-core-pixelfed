@@ -4,7 +4,7 @@ set -o errexit
 
 PATH=/opt/local/gnu/bin:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
 
-PIXELFED_VERSION='v0.12.4'
+PIXELFED_VERSION='v0.12.5'
 
 # Munin plugins
 MUNIN_PLUGINS="
@@ -20,17 +20,17 @@ echo "* Add pixelfed user"
 useradd -d /opt/pixelfed -c "pixelfed user" -s /bin/bash -g www pixelfed
 
 echo "* Install dependencies"
-cd /opt/pixelfed &&
-  export COMPOSER_HOME=/opt/pixelfed &&
-  composer install --no-ansi --no-interaction --optimize-autoloader
+cd /opt/pixelfed \
+  && export COMPOSER_HOME=/opt/pixelfed \
+  && composer install --no-ansi --no-interaction --optimize-autoloader
 
 echo "* Backup storage skel folder"
 mv /opt/pixelfed/storage /opt/pixelfed/storage.skel
 mkdir /opt/pixelfed/storage
 
 echo "* Patch file system permissions"
-cd /opt/pixelfed/config &&
-  patch </tmp/filesystems.php.diff
+cd /opt/pixelfed/config \
+  && patch < /tmp/filesystems.php.diff
 
 echo "* Setup permissions for pixelfed folder"
 chown -R pixelfed:www /opt/pixelfed

@@ -1,7 +1,7 @@
 name="core-pixelfed"
 organization="SkyLime"
 brand="Instance"
-version="24.4.1"
+version="24.4.2"
 description="Pixelfed - image sharing social network service"
 homepage="https://github.com/skylime/mi-core-pixelfed"
 users="root admin"
